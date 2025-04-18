@@ -67,3 +67,14 @@ jobs:
       uses: github/codeql-action/analyze@v3
       with:
         category: "/language:${{matrix.language}}"
+
+    - name: Get latest release
+      id: get_release
+      run: |
+        echo "CSHARP"
+        less /home/runner/work/CODEQLDENEME/results/csharp.sarif
+        
+        echo "------"
+        
+        echo "JAVASCRIPT" 
+        less /home/runner/work/CODEQLDENEME/results/javascript.sarif
