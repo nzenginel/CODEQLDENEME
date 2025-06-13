@@ -99,7 +99,7 @@ jobs:
               echo "ruleID: $ruleId"
         
               # Find the rule in extensions[0].rules
-              rule=$(jq -c --arg rid "$ruleId" '.runs[0].tool.extensions[0].rules[] | select(.id == $rid)' "$path")
+              rule=$(jq -c --arg rid "$ruleId" '.runs[0].tool.extensions[0].rules[] | select(.id == $rid)' "$file")
               rule_id=$(echo "$rule" | jq -r '.id')
               short_desc=$(echo "$rule" | jq -r '.shortDescription.text')
               level=$(echo "$rule" | jq -r '.defaultConfiguration.level')
