@@ -83,10 +83,11 @@ jobs:
     - name: Parse Sarif file
       id: parse_sarif
       run: |
-        cd "${{github.workspace}}/CodeQL-Results/"
+        #cd "${{github.workspace}}/CodeQL-Results/"
 
-        for file in $(find . -type f -name "*.sarif"); do
+        for file in $(find "${{github.workspace}}/CodeQL-Results/" -type f -name "*.sarif"); do
           echo "Processing $file"
+          
           
           # Get the number of results
           results_length=$(jq '.runs[0].results | length' "$file")
