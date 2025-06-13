@@ -83,28 +83,34 @@ jobs:
     - name: Parse Sarif file
       id: parse_sarif
       run: |
-        path="${{github.workspace}}/CodeQL-Results/csharp.sarif"
-        echo "$path"
+        cd "${{github.workspace}}/CodeQL-Results/"
+
+        for file in $(find . -type f -name "*.sarif"); do
+          echo "Processing $file"
+          
+          # Get the number of results
+          results_length=$(jq '.runs[0].results | length' "$file")
+          echo "Results count: $results_length"
         
-        # Get the number of results
-        results_length=$(jq '.runs[0].results | length' "$path")
-        echo "Results count: $results_length"
+          # Loop through each result
+          jq -c '.runs[0].results[]' "$file" | while read -r result; do
+              ruleId=$(echo "$result" | jq -r '.ruleId')
+              echo "ruleID: $ruleId"
         
-        # Loop through each result
-        jq -c '.runs[0].results[]' "$path" | while read -r result; do
-            ruleId=$(echo "$result" | jq -r '.ruleId')
-            echo "ruleID: $ruleId"
-        
-            # Find the rule in extensions[0].rules
-            rule=$(jq -c --arg rid "$ruleId" '.runs[0].tool.extensions[0].rules[] | select(.id == $rid)' "$path")
-            rule_id=$(echo "$rule" | jq -r '.id')
-            short_desc=$(echo "$rule" | jq -r '.shortDescription.text')
-            level=$(echo "$rule" | jq -r '.defaultConfiguration.level')
-        
-            echo "codeQLRule: $rule_id $short_desc"
-            echo "$level"
-            echo "*****"
-            # error - High
-            # warning - Medium
-            # info - Low
+              # Find the rule in extensions[0].rules
+              rule=$(jq -c --arg rid "$ruleId" '.runs[0].tool.extensions[0].rules[] | select(.id == $rid)' "$path")
+              rule_id=$(echo "$rule" | jq -r '.id')
+              short_desc=$(echo "$rule" | jq -r '.shortDescription.text')
+              level=$(echo "$rule" | jq -r '.defaultConfiguration.level')
+          
+              echo "codeQLRule: $rule_id $short_desc"
+              echo "$level"
+              echo "*****"
+              # error - High
+              # warning - Medium
+              # info - Low
+          done
+
         done
+
+        
