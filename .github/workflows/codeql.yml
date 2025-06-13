@@ -67,22 +67,23 @@ jobs:
       uses: github/codeql-action/analyze@v3
       with:
         category: "/language:${{matrix.language}}"
+        output:  "${{github.workspace}}/CodeQL-Results"
 
     - name: Print sarif files
       id: print_sarif
       run: |
         echo "CSHARP"
-        less /home/runner/work/CODEQLDENEME/results/csharp.sarif
+        less "${{github.workspace}}/CodeQL-Results/csharp.sarif
         
         echo "------"
         
         echo "JAVASCRIPT" 
-        less /home/runner/work/CODEQLDENEME/results/javascript.sarif
+        less "${{github.workspace}}/CodeQL-Results/javascript.sarif
 
     - name: Parse Sarif file
       id: parse_sarif
       run: |
-        path="${{github.workspace}}/results/csharp.sarif"
+        path="${{github.workspace}}/CodeQL-Results/csharp.sarif"
         echo "$path"
         
         # Get the number of results
